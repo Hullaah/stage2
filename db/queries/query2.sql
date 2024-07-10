@@ -5,5 +5,5 @@ SELECT org.org_id,
     org.description
 FROM organisation org
     INNER JOIN membership m ON org.org_id = m.org_id
-WHERE m.user_id = "logged in user id"
-    AND org.org_id = "org id from path variable";
+WHERE m.user_id = $1
+    AND org.org_id = $2;

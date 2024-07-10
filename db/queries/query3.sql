@@ -5,4 +5,4 @@ SELECT org.org_id,
     org.description
 FROM organisation org
     INNER JOIN membership m ON org.org_id = m.org_id
-WHERE m.user_id = "logged in user id";
+WHERE m.user_id = $1;

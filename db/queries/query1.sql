@@ -8,5 +8,5 @@ SELECT u.user_id,
 FROM "user" u
     JOIN membership m1 ON u.user_id = m1.user_id
     JOIN membership m2 ON m1.org_id = m2.org_id
-WHERE u.user_id = "user id in path variable"
-    AND m2.user_id = "logged in user id";
+WHERE u.user_id = $1
+    AND m2.user_id = $2;
