@@ -1,19 +1,12 @@
 -- Gets a user in same organisation with a particular user
-SELECT user_id,
-    first_name,
-    last_name,
-    email,
-    phone
-FROM user
-WHERE id = "user id in path variable"
-    AND EXISTS (
-        SELECT 1
-        FROM organisation o1
-            INNER JOIN membership m1 USING(org_id)
-        WHERE m1.user_id = "user id in path variable"
-        INTERSECT
-        SELECT 1
-        FROM organisation o2
-            INNER JOIN membership m2 USING(org_id)
-        WHERE m2.user_id = "logged in user id"
-    );
+-- name: GetUserIfInSameOrganisation :one
+SELECT u.user_id,
+    u.first_name,
+    u.last_name,
+    u.email,
+    u.phone
+FROM "user" u
+    JOIN membership m1 ON u.user_id = m1.user_id
+    JOIN membership m2 ON m1.org_id = m2.org_id
+WHERE u.user_id = "user id in path variable"
+    AND m2.user_id = "logged in user id";
