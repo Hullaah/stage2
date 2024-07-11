@@ -1,4 +1,4 @@
--- Inserts a new organisation into the table and updates the membership table to reflect this update
+-- Adds a new organisation to the organisation table
 -- name: CreateOrganisation :one
 INSERT INTO organisation (name, description)
 VALUES ($1, $2)

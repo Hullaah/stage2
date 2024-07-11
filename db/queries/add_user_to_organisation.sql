@@ -1,6 +1,4 @@
+-- Adds a user to a particular organisation
 -- name: AddUserToOrganisation :exec
 INSERT INTO membership (user_id, org_id)
-VALUES (
-        "user id from request bosy",
-        "organisation id from path variable"
-    );
+VALUES ($1, $2);

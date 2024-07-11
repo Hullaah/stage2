@@ -7,17 +7,22 @@ package models
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addUserToOrganisation = `-- name: AddUserToOrganisation :exec
 INSERT INTO membership (user_id, org_id)
-VALUES (
-        "user id from request bosy",
-        "organisation id from path variable"
-    )
+VALUES ($1, $2)
 `
 
-func (q *Queries) AddUserToOrganisation(ctx context.Context) error {
-	_, err := q.db.Exec(ctx, addUserToOrganisation)
+type AddUserToOrganisationParams struct {
+	UserID pgtype.UUID
+	OrgID  pgtype.UUID
+}
+
+// Adds a user to a particular organisation
+func (q *Queries) AddUserToOrganisation(ctx context.Context, arg AddUserToOrganisationParams) error {
+	_, err := q.db.Exec(ctx, addUserToOrganisation, arg.UserID, arg.OrgID)
 	return err
 }
