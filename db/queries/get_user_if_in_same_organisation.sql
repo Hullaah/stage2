@@ -4,6 +4,7 @@ SELECT u.user_id,
     u.first_name,
     u.last_name,
     u.email,
+    u.password,
     u.phone
 FROM "user" u
     JOIN membership m1 ON u.user_id = m1.user_id

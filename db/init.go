@@ -3,21 +3,30 @@ package db
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/Hullaah/stage2/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
-	"log"
-	"os"
 )
 
-func CreateQueryEngine() *models.Queries {
-	godotenv.Load("/.env")
+const dropAll = `
+	DELETE FROM membership;
+	DELETE FROM "user";
+	DELETE FROM organisation;
+`
+
+var dbConn = initializeDB()
+
+func initializeDB() *pgx.Conn {
+	godotenv.Load("../.env")
 	var (
-		host     = os.Getenv("DB_HOST")
-		port     = os.Getenv("DB_PORT")
-		database = os.Getenv("DB_NAME")
-		user     = os.Getenv("DB_USER")
-		password = os.Getenv("DB_PWD")
+		host     = os.Getenv("STAGE2_POSTGRESQL_HOST")
+		port     = os.Getenv("STAGE2_POSTGRESQL_PORT")
+		database = os.Getenv("STAGE2_POSTGRESQL_DB")
+		user     = os.Getenv("STAGE2_POSTGRESQL_USER")
+		password = os.Getenv("STAGE2_POSTGRESQL_PWD")
 	)
 	ctx := context.Background()
 	connString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, database)
@@ -25,5 +34,13 @@ func CreateQueryEngine() *models.Queries {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return models.New(conn)
+	return conn
+}
+
+func CreateQueryEngine() *models.Queries {
+	environment := os.Getenv("STAGE2_ENV")
+	if environment == "test" {
+		dbConn.Exec(context.Background(), dropAll)
+	}
+	return models.New(dbConn)
 }

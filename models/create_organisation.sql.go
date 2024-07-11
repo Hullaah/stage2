@@ -22,7 +22,7 @@ type CreateOrganisationParams struct {
 	Description pgtype.Text
 }
 
-// Adds a new organisation to the organisation table
+// Creates an organisation and adds it to the organisation table
 func (q *Queries) CreateOrganisation(ctx context.Context, arg CreateOrganisationParams) (Organisation, error) {
 	row := q.db.QueryRow(ctx, createOrganisation, arg.Name, arg.Description)
 	var i Organisation

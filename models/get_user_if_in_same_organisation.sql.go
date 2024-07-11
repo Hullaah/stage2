@@ -16,6 +16,7 @@ SELECT u.user_id,
     u.first_name,
     u.last_name,
     u.email,
+    u.password,
     u.phone
 FROM "user" u
     JOIN membership m1 ON u.user_id = m1.user_id
@@ -29,23 +30,16 @@ type GetUserIfInSameOrganisationParams struct {
 	UserID_2 pgtype.UUID
 }
 
-type GetUserIfInSameOrganisationRow struct {
-	UserID    pgtype.UUID
-	FirstName string
-	LastName  string
-	Email     string
-	Phone     pgtype.Text
-}
-
 // Gets a user in same organisation with a particular user
-func (q *Queries) GetUserIfInSameOrganisation(ctx context.Context, arg GetUserIfInSameOrganisationParams) (GetUserIfInSameOrganisationRow, error) {
+func (q *Queries) GetUserIfInSameOrganisation(ctx context.Context, arg GetUserIfInSameOrganisationParams) (User, error) {
 	row := q.db.QueryRow(ctx, getUserIfInSameOrganisation, arg.UserID, arg.UserID_2)
-	var i GetUserIfInSameOrganisationRow
+	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
+		&i.Password,
 		&i.Phone,
 	)
 	return i, err

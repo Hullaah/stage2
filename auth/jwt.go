@@ -2,9 +2,11 @@ package auth
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/Hullaah/stage2/handlers"
 	"github.com/Hullaah/stage2/models"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -41,21 +43,23 @@ func GenerateToken(u models.User) string {
 	return s
 }
 
-func ParseToken(tokenString string) (*UserClaims, error) {
+func ParseTokenString(tokenString string) (*UserClaims, error) {
 	godotenv.Load("../.env")
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
+	e := handlers.APIError{
+		Status:     "Unauthorized",
+		Message:    "Invalid access token",
+		StatusCode: http.StatusUnauthorized,
+	}
 	if err != nil {
-		// generate an unauthorised error response
-		return nil, nil // tmp
+		return nil, e
 	} else if !token.Valid {
-		// generate an unauthorised error response
-		return nil, nil // tmp
+		return nil, e
 	} else if claims, ok := token.Claims.(*UserClaims); ok {
 		return claims, nil
 	} else {
-		// generate an unauthorised error response
-		return nil, nil // tmp
+		return nil, e
 	}
 }
